@@ -33,6 +33,7 @@ import {
  * @returns HTTP 200 OK and a {@link SignedPayload}.
  */
 export function sign (request: Request): Response<any> {
+  console.log("-------------------------------------------------- sign() is called");
   // Get the authentication details of the caller
   const authenticatedIdentity = new AuthenticatedIdentity(request.caller);
   const requestParser = new RequestParser(request);
@@ -49,6 +50,7 @@ export function sign (request: Request): Response<any> {
   // Read the text from the request and validate
   // before we do any work retrieving keys.
   const payload = request.body.text();
+  console.log('payload: ', payload)
   if (!payload || payload.length === 0) {
     const payloadNotProvided = new PayloadNotProvided(authenticatedIdentity);
     console.log(payloadNotProvided);
@@ -73,6 +75,9 @@ export function sign (request: Request): Response<any> {
     console.error(keyNotConfigured);
     return keyNotConfigured.toErrorResponse();
   }
+  
+  console.log('currentKey: ', JSON.stringify(currentKey, null, 2))
+  console.log('<AlgorithmName>currentKey.algorithm.toString(): ', <AlgorithmName>currentKey.algorithm.toString())
 
   const signingAlgorithm: SigningAlgorithm = {
     name: <AlgorithmName>currentKey.algorithm.toString(),

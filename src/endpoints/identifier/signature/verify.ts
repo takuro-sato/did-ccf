@@ -35,6 +35,7 @@ import {
  * @returns HTTP 200 OK and a boolean indicating whether the signature is valid.
  */
 export function verify (request: Request): Response<any> {
+  console.log("-------------------------------------------------- verify() is called");
   // Get the authentication details of the caller
   const authenticatedIdentity = new AuthenticatedIdentity(request.caller);
   const requestParser = new RequestParser(request);
@@ -52,6 +53,7 @@ export function verify (request: Request): Response<any> {
   // the body JSON and validate before we do any
   // real work.
   const bodyJson = <SignedPayload>request.body.json();
+  console.log('bodyJson: ', JSON.stringify(bodyJson, null, 2))
   const signatureBase64 = bodyJson.signature;
   const payload = bodyJson.payload;
   const signerIdentifier = bodyJson.signer;
@@ -93,6 +95,8 @@ export function verify (request: Request): Response<any> {
     return keyNotConfigured.toErrorResponse();
   }
 
+  console.log('currentKey: ', JSON.stringify(currentKey, null, 2))
+  console.log('<AlgorithmName>currentKey.algorithm.toString(): ', <AlgorithmName>currentKey.algorithm.toString())
   const signingAlgorithm: SigningAlgorithm = {
     name: <AlgorithmName>currentKey.algorithm.toString(),
     hash: 'SHA-256',
