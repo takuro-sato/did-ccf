@@ -13,7 +13,7 @@ source set_vars.sh
 ## [Creating identifier](https://github.com/microsoft/did-ccf/blob/main/DID_CCF.md)
 
 > Supported key algorithms (alg):
-> - RSASSA_PKCS1-v1_5
+> - RSASSA-PKCS1-v1_5
 > - ECDSA
 > - EdDSA
 >     
@@ -26,12 +26,13 @@ source set_vars.sh
 # ECDSA
 create_res=$($scurl $node/app/identifiers/create?alg=ECDSA'&'curve=secp256k1 --cacert $service_cert --signing-key $signing_key_pem --signing-cert $signing_cert_pem -H "content-type: application/json" -X POST -s) && echo $create_res | jq
 
-# RSASSA_PKCS1-v1_5
-create_res=$($scurl $node/app/identifiers/create?alg=RSASSA_PKCS1-v1_5 --cacert $service_cert --signing-key $signing_key_pem --signing-cert $signing_cert_pem -H "content-type: application/json" -X POST -s) && echo $create_res | jq
+# RSASSA-PKCS1-v1_5
+create_res=$($scurl $node/app/identifiers/create?alg=RSASSA-PKCS1-v1_5 --cacert $service_cert --signing-key $signing_key_pem --signing-cert $signing_cert_pem -H "content-type: application/json" -X POST -s) && echo $create_res | jq
 
 # EdDSA
 create_res=$($scurl $node/app/identifiers/create?alg=EdDSA --cacert $service_cert --signing-key $signing_key_pem --signing-cert $signing_cert_pem -H "content-type: application/json" -X POST -s) && echo $create_res | jq
 
+# extract identifier
 identifier=$(echo $create_res | jq -r '.id' | awk '{n=split($0,arr,":"); print arr[n]}') && echo $identifier
 ```
 ## Resolve identifier

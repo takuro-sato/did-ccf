@@ -84,7 +84,7 @@ All authenticated members of the consortium can update (roll, revoke) the keys a
 When rolling the current signing key for a given identifier, if no algorithm or curve parameters are specified, the existing key properties are used to determine the new key. Key rolling results in the deletion of the private key and the key entry being marked as historical. Historical keys continue to be listed in the DID Document for the identifier. If a member wants to invalidate all credentials signed by a particular key, then the key should be revoked. This deletes the private key and marks the key as revoked, removing the key from the list of signing keys in the DID Document.
 
 Supported key algorithms (alg):
-- RSASSA_PKCS1-v1_5
+- RSASSA-PKCS1-v1_5
 - ECDSA
 - EdDSA
     
