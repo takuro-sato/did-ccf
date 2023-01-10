@@ -2,3 +2,5 @@
 /node_modules
 /dist
 package-lock.json
+.venv_ccf_sandbox/
+workspace/
