@@ -7,10 +7,12 @@ import {
   } from '@microsoft/ccf-app';
 import {
     sign as createSignature,
+    verifySignature,
     SigningAlgorithm,
 } from '@microsoft/ccf-app/crypto';
 import {
     AlgorithmName,
+    ccf,
 } from '@microsoft/ccf-app/global';
 import { Base64 } from 'js-base64';
 import {
@@ -88,6 +90,88 @@ export function sign (request: Request): Response<any> {
   // then convert to a Base64URL encoded string
   const payloadBuffer = stringConverter.encode(payload);
   const signatureBuffer = createSignature(signingAlgorithm, currentKey.privateKey, payloadBuffer);
+
+  // debug ->
+  const isSignatureValid = verifySignature(
+    signingAlgorithm,
+    currentKey.publicKey,
+    signatureBuffer,
+    payloadBuffer);
+  console.log("isSignatureValid at sign(): ", isSignatureValid)
+
+  // <- debug
+
+  {
+    console.log("^^^^^^ Lazy print debug")
+    const publicKey = currentKey.publicKey
+    const privateKey = currentKey.privateKey
+    const data = ccf.strToBuf("foo")
+    const signature = ccf.crypto.sign(
+      {
+        name: "ECDSA",
+        hash: "SHA-256",
+      },
+      privateKey,
+      data
+    )
+    const ret = ccf.crypto.verifySignature(
+        {
+          name: "ECDSA",
+          hash: "SHA-256",
+        },
+        publicKey,
+        signature,
+        data
+      )
+    console.log("^^^^^^ ret: ", ret)
+  }
+
+  {
+    console.log("$$$$$$ ECDSA sign/verify")
+    const { publicKey, privateKey } = ccf.crypto.generateEcdsaKeyPair("secp256r1")
+    const data = ccf.strToBuf("foo")
+    const signature = ccf.crypto.sign(
+      {
+        name: "ECDSA",
+        hash: "SHA-256",
+      },
+      privateKey,
+      data
+    )
+    const ret = ccf.crypto.verifySignature(
+        {
+          name: "ECDSA",
+          hash: "SHA-256",
+        },
+        publicKey,
+        signature,
+        data
+      )
+    console.log("$$$$$$ ret: ", ret)
+  }
+
+  {
+    console.log("@@@@@@ EdDSA sign/verify")
+    const { publicKey, privateKey } = ccf.crypto.generateEddsaKeyPair("curve25519")
+    const data = ccf.strToBuf("foo")
+    const signature = ccf.crypto.sign(
+      {
+        name: "EdDSA",
+      },
+      privateKey,
+      data
+    )
+    const ret = ccf.crypto.verifySignature(
+        {
+          name: "EdDSA",
+        },
+        publicKey,
+        signature,
+        data
+      )
+    console.log("@@@@@@ ret: ", ret)
+  }
+
   const signature = Base64.fromUint8Array(new Uint8Array(signatureBuffer), true);
 
   return {
